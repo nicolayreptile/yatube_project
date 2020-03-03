@@ -1,0 +1,5 @@
+{% extends "new_post.html" %}
+{% block title %}Редактировать запись{% endblock %}
+{% block card_header%}Редактировать запись{% endblock %}
+{% block action %}{% url 'post_edit' post.author.username post.id %}{% endblock %}
+{% block submit %}Сохранить изменения{% endblock %}

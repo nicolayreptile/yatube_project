@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %} Последние обновления {% endblock %}
+{% block content %}
+<main role="main" class="container">
+    {% block menu %}
+        {% include "menu.html" with index=True %}
+    {% endblock %}
+    <div class="row"></div>
+    {% block content_title %}
+        <h1>Последние обновления на сайте</h1>
+    {% endblock %}
+    {% for post in page %}
+        {% include "post_item.html" with post=post %}
+    {% endfor %}
+    {% if page.has_other_pages %}
+        {% include "paginator.html" with items=page paginator=paginator %}
+    {% endif %}
+</div>
+</main>
+{% endblock %}
