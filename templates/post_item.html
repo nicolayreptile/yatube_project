@@ -26,7 +26,7 @@
             <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group ">
                             <a class="btn btn-sm text-muted" href="{% url 'post' post.author.username post.id %}" role="button">
-                                    {% if post.comments.count %}
+                                    {% if post.comment_count %}
                                     Комментариев: {{ post.comments.count }}
                                     {% else %}
                                     Добавить комментарий

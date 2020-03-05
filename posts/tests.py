@@ -6,7 +6,7 @@ from .models import Post, Group
 from yatube.settings  import MEDIA_ROOT
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from time import sleep
+from django.core.cache import cache
 
 class EmailTest(TestCase):
     def setUp(self):
@@ -58,6 +58,7 @@ class TestPost(TestCase):
 
     def test_create_new_post_authorized_user(self):   
         # проверяем post для авторизированного пользователя
+        cache.clear()
         self.c.force_login(self.user)
         response = self.c.post("/new/", { "author": self.user, "text": self.new_post.text, }, follow=True)
         self.assertRedirects(response, "/", msg_prefix="Redirect after creation post doesn't work")
@@ -85,27 +86,21 @@ class TestImage(TestCase):
     def setUp(self):
         self.client = Client()             
         user = User.objects.create(username="test", password="test")
-        group = Group.objects.create(title="Test Group", slug="some-group", description="Something about group") 
-        image = SimpleUploadedFile("image.jpg", content=open(MEDIA_ROOT+"\\test.jpg", "rb").read(), content_type="image/jpeg")            
-        self.post = Post.objects.create(author=user, text="Interesting text", group=group, image=image)        
+        self.group = Group.objects.create(title="Test Group", slug="some-group", description="Something about group") 
+        self.image = SimpleUploadedFile("test.jpg", content=open(MEDIA_ROOT+"\\test.jpg", "rb").read(), content_type="image/jpeg")            
+        self.post = Post.objects.create(author=user, text="Interesting text", group=self.group)        
         self.client.force_login(user)   
         
-    def test_image_upload(self):        
-        image = SimpleUploadedFile("image.jpg", content=open(MEDIA_ROOT+"\\test.jpg", "rb").read(), content_type="image/jpeg")              
-        response = self.client.post(reverse("post_edit", kwargs={"username": self.post.author.username, "post_id": self.post.id}), {"author": self.post.author, "text": "Updated text", "image": image, }, follow=True)
-        self.assertRedirects(response, reverse("post", kwargs={"username": self.post.author.username, "post_id": self.post.id}))
-    
-    def test_image_index(self):    
+    def test_image_upload(self):
+        cache.clear()                
+        response = self.client.post(reverse("post_edit", kwargs={"username": self.post.author.username, "post_id": self.post.id}), {"author": self.post.author, "text": "Updated text", "image": self.image, "group": self.group.id, }, follow=True)
+        self.assertRedirects(response, reverse("post", kwargs={"username": self.post.author.username, "post_id": self.post.id}))         
         response = self.client.get(reverse("index"))
-        self.assertContains(response,  "<img", status_code=200, msg_prefix="Index page doesn't contain image")
-    
-    def test_image_profile(self):
+        self.assertContains(response,  "<img ", status_code=200, msg_prefix="Index page doesn't contain image")        
         response = self.client.get(reverse("profile", kwargs={"username": self.post.author.username}))
-        self.assertContains(response, "<img", status_code=200, msg_prefix="Profile page doesn't contain image")
-
-    def test_image_group(self):
+        self.assertContains(response, "<img ", status_code=200, msg_prefix="Profile page doesn't contain image")
         response = self.client.get(reverse("group", kwargs={"slug": self.post.group.slug }))
-        self.assertContains(response, "<img", status_code=200, msg_prefix="Group page doesn't contain image")
+        self.assertContains(response, "<img ", status_code=200, msg_prefix="Group page doesn't contain image")
 
 class TestComment(TestCase):
     def setUp(self):
@@ -141,7 +136,7 @@ class TestCache(TestCase):
         self.client.post(reverse("new_post"), new_post, follow=True)
         response = self.client.get(index)
         self.assertNotContains(response, new_post["text"])
-        sleep(20)
+        cache.clear()
         response = self.client.get(index)
         self.assertContains(response, new_post["text"])
 
