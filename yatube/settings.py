@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import django_heroku
 
+django_heroku.settings(locals())
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,9 +27,10 @@ SITE_ID = 1
 SECRET_KEY = '7@#)rsjm9$a7fl=b75i+n-$@pyo5l_)mb43gf1n^4joah(pouc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
+        "*",
         "localhost",
         "127.0.0.1",
         "[::1]",
@@ -146,7 +149,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Login
 LOGIN_URL = "/auth/login"
 LOGIN_REDIRECT_URL ="index"
-# LOGOUT_REDIRECT_URL = "index"
 
 #  подключаем движок filebased.EmailBackend
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"

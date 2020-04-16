@@ -13,7 +13,8 @@ urlpatterns = [
     #Пост пользователя
     path("<username>/<int:post_id>/", views.post, name="post"),
     path("<username>/<int:post_id>/edit/", views.post_edit, name="post_edit"),
-    path("<username>/<int:post_id>/comment/", views.add_comment, name="add_comment"),    
+    path("<username>/<int:post_id>/comment/", views.add_comment, name="add_comment"),  
+    path("<username>/<int:post_id>/delete/", views.delete_post, name="delete_post"),  
     #Подписаться или отписаться
     path("<username>/follow/", views.profile_follow, name="profile_follow"),
     path("<username>/unfollow/", views.profile_unfollow, name="profile_unfollow"),

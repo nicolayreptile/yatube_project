@@ -25,16 +25,16 @@ handler500 = "posts.views.server_error"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("posts.urls")),
     path("auth/", include("users.urls")),
     path("auth/", include("django.contrib.auth.urls")),
     path("about/", include("django.contrib.flatpages.urls")),
     path('admin/', admin.site.urls),
+    path("", include("posts.urls")),
 ]
 
 urlpatterns += [
-    path('about-us/', views.flatpage, {'url': '/about-us/'}, name='about'),
-    path('terms/', views.flatpage, {'url': '/terms/'}, name='terms'),
+    path('terms/', views.flatpage, {'url': '/about-terms/'}, name='about-terms'),
+    path('author/', views.flatpage, {'url': '/about-author/'}, name='about-author'),
 ]
 
 if settings.DEBUG:

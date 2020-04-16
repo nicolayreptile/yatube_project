@@ -3,3 +3,13 @@
 {% block card_header%}Редактировать запись{% endblock %}
 {% block action %}{% url 'post_edit' post.author.username post.id %}{% endblock %}
 {% block submit %}Сохранить изменения{% endblock %}
+{% block additional %}
+    <form method="POST" action="{% url 'delete_post' username=post.author.username post_id=post.id %}">
+        {% csrf_token %}
+        <div class="col-md-6 offset-md-4">              
+            <button type="submit" class="btn btn-danger">
+                Удалить запись
+            </button>
+        </div>
+    </form>
+{% endblock%}

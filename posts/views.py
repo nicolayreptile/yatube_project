@@ -90,7 +90,14 @@ def post_edit(request, username, post_id):
             form = PostForm(instance=post)
         return render(request, "edit_post.html", {"form": form, "post": post, })
     else:
-        return redirect('post', username=post.author, post_id=post.id)
+        return redirect("post", username=post.author, post_id=post.id)
+
+@login_required
+def delete_post(request, username, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.user == post.author:
+        post.delete()
+    return redirect("profile", username=username)
 
 @login_required
 def add_comment(request, username, post_id):
